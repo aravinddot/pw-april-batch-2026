@@ -202,13 +202,13 @@ test.describe('Advanced playwright element handling', () => {
         const cookie = await context.cookies()
         const cookieTwo = await contextTwo.cookies()
 
-        console.log("cookie===>"+ JSON.stringify(cookie));
-        console.log(("cookieTwo===>"+ JSON.stringify(cookieTwo)));
+        console.log("cookie===>" + JSON.stringify(cookie));
+        console.log(("cookieTwo===>" + JSON.stringify(cookieTwo)));
 
     })
 
 
-    test('handling drag and drop', async({page})=> {
+    test('handling drag and drop', async ({ page }) => {
 
 
         await page.goto('https://playwright-mastery-academy-app.vercel.app/practice/sandbox-advanced')
@@ -220,7 +220,7 @@ test.describe('Advanced playwright element handling', () => {
     })
 
 
-    test('handling single and multiple files upload', async({page})=> {
+    test('handling single and multiple files upload', async ({ page }) => {
 
 
 
@@ -237,20 +237,127 @@ test.describe('Advanced playwright element handling', () => {
 
 
 
-    test('handling downloads', async({page}) => {
+    test('handling downloads', async ({ page }) => {
 
         await page.goto('https://playwright-mastery-academy-app.vercel.app/practice/sandbox-advanced')
 
-       const [downloadFile] = await Promise.all([
+        const [downloadFile] = await Promise.all([
             page.waitForEvent('download'),
             page.getByTestId('download-pdf-btn').click()
-       ])
+        ])
 
-       const fileName = await downloadFile.suggestedFilename()
-       
-       await downloadFile.saveAs(`downloads/${fileName}`)
+        const fileName = await downloadFile.suggestedFilename()
+
+        await downloadFile.saveAs(`downloads/${fileName}`)
 
     })
+
+
+    test('handling iframe', async ({ page }) => {
+
+        await page.goto('https://playwright-mastery-academy-app.vercel.app/practice/sandbox-advanced')
+
+        const iframe = await page.frameLocator('#practice-iframe')
+
+        await iframe.locator('#frame-input').fill('Playwright')
+
+        await iframe.locator('#frame-save').click()
+
+        await expect(iframe.locator('#frame-result')).toContainText('Playwright saved')
+
+    })
+
+
+    test('handling shadow DOM', async({page})=> {
+
+        await page.goto('https://playwright-mastery-academy-app.vercel.app/practice/sandbox-advanced')
+
+        const showdowHost = await page.getByTestId('shadow-host')
+
+        await showdowHost.locator('#shadow-input').fill('TypeScript')
+
+        await showdowHost.locator('#shadow-save').click()
+
+        await expect(showdowHost.getByText('TypeScript saved')).toBeVisible()
+
+
+    })
+
+
+    test('handling date picker using type and fill', async({page}) => {
+
+        await page.goto('https://playwright-mastery-academy-app.vercel.app/practice/sandbox-advanced')
+
+        await page.getByTestId('practice-date-picker').type('01-11-1995')
+
+        await page.waitForTimeout(5000)
+
+        await page.getByTestId('practice-date-picker').fill('1995-11-01')
+
+        await page.waitForTimeout(5000)
+
+
+    })
+
+    test('handling date picker using DOM manipulation', async({page}) => {
+
+        await page.goto('https://playwright-mastery-academy-app.vercel.app/practice/sandbox-advanced')
+
+        const datePicker = await page.getByTestId('interview-date-picker')
+
+        await datePicker.evaluate((dom, val) => {
+
+            const html = dom as HTMLInputElement
+            html.value = val as string
+            html.dispatchEvent(new Event('input'))
+            
+
+        }, "1995-11-01")
+
+        await page.waitForTimeout(5000)
+
+
+
+
+    })
+
+
+
+
+    test('Advanced Wait commands', async({page})=> {
+
+        await page.goto('https://playwright-mastery-academy-app.vercel.app/practice/sandbox-advanced')
+
+        await page.getByTestId('wait-navigation-link').click()
+        await page.waitForURL('https://playwright-mastery-academy-app.vercel.app/practice/popup?source=waitfornavigation')
+        await expect(page.getByText('Popup Opened Successfully')).toBeVisible()
+
+        await page.getByTestId('wait-response-btn').click()
+        await page.waitForResponse('https://playwright-mastery-academy-app.vercel.app/api/practice/waits-status')
+        await expect(page.getByText('Trigger API Response Completed')).toBeVisible()
+
+
+        await page.getByTestId('wait-response-btn').click()
+        await page.getByText('Trigger API Response Completed').waitFor({state: 'visible'})
+        await expect(page.getByText('Trigger API Response Completed')).toBeVisible()
+
+        // hidden - locator hidden in dom should not be visible
+        // attached - Locator exists in DOM
+        // detached - locator should not exists in DOM and should not be visible
+
+
+        await page.getByTestId('wait-response-btn').click()
+        await page.waitForSelector('//*[contains(text(), "Trigger API Response Completed")]')
+        await expect(page.getByText('Trigger API Response Completed')).toBeVisible()
+
+
+
+
+        
+    })
+
+
+
 
 
 
