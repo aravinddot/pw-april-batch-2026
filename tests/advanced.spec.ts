@@ -121,7 +121,7 @@ test.describe('Advanced playwright element handling', () => {
     })
 
 
-    test('Handling new Tab', async()=> {
+    test('Handling new Tab', async () => {
 
         const browser = await chromium.launch()
         const context = await browser.newContext()
@@ -136,6 +136,126 @@ test.describe('Advanced playwright element handling', () => {
 
         await expect(newPage.getByText('Popup Opened Successfully')).toBeVisible()
 
+        await newPage.waitForTimeout(5000)
+
+        await page.bringToFront()
+
+        await expect(page.getByText('Open popup tab (right click only)')).toBeVisible()
+
+        await page.waitForTimeout(5000)
+
     })
+
+
+    test('Open a new tab direct click blocked', async () => {
+
+        const browser = await chromium.launch()
+        const context = await browser.newContext()
+        const page = await context.newPage()
+
+        await page.goto('https://playwright-mastery-academy-app.vercel.app/practice/sandbox-advanced')
+
+        await page.getByTestId('popup-right-click-link').click()
+
+        await expect(page.getByText('Direct click blocked. Use right click -> Open link in new tab.')).toBeVisible()
+
+        const link = await page.getByTestId('popup-right-click-link').getAttribute('href')
+
+        console.log(link);
+
+        const pageTwo = await context.newPage()
+
+        await pageTwo.goto(`https://playwright-mastery-academy-app.vercel.app/${link}`)
+
+        await expect(pageTwo.getByText('Popup Opened Successfully')).toBeVisible()
+
+        await pageTwo.waitForTimeout(3000)
+
+
+    })
+
+
+    test('isolated context', async () => {
+        test.setTimeout(180000)
+        const browser = await chromium.launch()
+
+        const context = await browser.newContext()
+        const page = await context.newPage()
+
+        await page.goto('https://testcms.reco-claims.ca/Login')
+        await page.locator('[name="Username"]').fill('info+programmanager@xlgclaims.com')
+        await page.locator('[name="Password"]').fill('Test1234!')
+        await page.locator('[type="submit"]').click()
+
+        await page.waitForTimeout(10000)
+
+        const contextTwo = await browser.newContext()
+        const pageTwo = await contextTwo.newPage()
+
+        await pageTwo.goto('https://testcms.reco-claims.ca/Login')
+        await pageTwo.locator('[name="Username"]').fill('info+programmanager@xlgclaims.com')
+        await pageTwo.locator('[name="Password"]').fill('Test1234!')
+        await pageTwo.locator('[type="submit"]').click()
+
+        await pageTwo.waitForTimeout(10000)
+
+        const cookie = await context.cookies()
+        const cookieTwo = await contextTwo.cookies()
+
+        console.log("cookie===>"+ JSON.stringify(cookie));
+        console.log(("cookieTwo===>"+ JSON.stringify(cookieTwo)));
+
+    })
+
+
+    test('handling drag and drop', async({page})=> {
+
+
+        await page.goto('https://playwright-mastery-academy-app.vercel.app/practice/sandbox-advanced')
+
+        await page.getByTestId('drag-source').dragTo(page.getByTestId('drop-target'))
+
+        await expect(page.getByText('Drop completed successfully.')).toBeVisible()
+
+    })
+
+
+    test('handling single and multiple files upload', async({page})=> {
+
+
+
+        await page.goto('https://playwright-mastery-academy-app.vercel.app/practice/sandbox-advanced')
+
+        await page.getByTestId('file-upload-input').setInputFiles('uploads/practice-data.csv')
+
+        await page.getByTestId('multi-file-upload-input').setInputFiles(['uploads/practice-data.csv', 'uploads/practice-data.xml', 'uploads/practice-notes.txt', 'uploads/practice-report.pdf'])
+
+        await page.waitForTimeout(5000)
+
+
+    })
+
+
+
+    test('handling downloads', async({page}) => {
+
+        await page.goto('https://playwright-mastery-academy-app.vercel.app/practice/sandbox-advanced')
+
+       const [downloadFile] = await Promise.all([
+            page.waitForEvent('download'),
+            page.getByTestId('download-pdf-btn').click()
+       ])
+
+       const fileName = await downloadFile.suggestedFilename()
+       
+       await downloadFile.saveAs(`downloads/${fileName}`)
+
+    })
+
+
+
+
+
+
 
 })
