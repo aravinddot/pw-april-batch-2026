@@ -268,7 +268,7 @@ test.describe('Advanced playwright element handling', () => {
     })
 
 
-    test('handling shadow DOM', async({page})=> {
+    test('handling shadow DOM', async ({ page }) => {
 
         await page.goto('https://playwright-mastery-academy-app.vercel.app/practice/sandbox-advanced')
 
@@ -284,7 +284,7 @@ test.describe('Advanced playwright element handling', () => {
     })
 
 
-    test('handling date picker using type and fill', async({page}) => {
+    test('handling date picker using type and fill', async ({ page }) => {
 
         await page.goto('https://playwright-mastery-academy-app.vercel.app/practice/sandbox-advanced')
 
@@ -299,7 +299,7 @@ test.describe('Advanced playwright element handling', () => {
 
     })
 
-    test('handling date picker using DOM manipulation', async({page}) => {
+    test('handling date picker using DOM manipulation', async ({ page }) => {
 
         await page.goto('https://playwright-mastery-academy-app.vercel.app/practice/sandbox-advanced')
 
@@ -310,7 +310,7 @@ test.describe('Advanced playwright element handling', () => {
             const html = dom as HTMLInputElement
             html.value = val as string
             html.dispatchEvent(new Event('input'))
-            
+
 
         }, "1995-11-01")
 
@@ -324,40 +324,206 @@ test.describe('Advanced playwright element handling', () => {
 
 
 
-    test('Advanced Wait commands', async({page})=> {
+    test('Advanced Wait commands', async ({ page }) => {
 
         await page.goto('https://playwright-mastery-academy-app.vercel.app/practice/sandbox-advanced')
 
-        await page.getByTestId('wait-navigation-link').click()
-        await page.waitForURL('https://playwright-mastery-academy-app.vercel.app/practice/popup?source=waitfornavigation')
-        await expect(page.getByText('Popup Opened Successfully')).toBeVisible()
+        // await page.getByTestId('wait-navigation-link').click()
+        // await page.waitForURL('https://playwright-mastery-academy-app.vercel.app/practice/popup?source=waitfornavigation')
+        // await expect(page.getByText('Popup Opened Successfully')).toBeVisible()
 
-        await page.getByTestId('wait-response-btn').click()
-        await page.waitForResponse('https://playwright-mastery-academy-app.vercel.app/api/practice/waits-status')
-        await expect(page.getByText('Trigger API Response Completed')).toBeVisible()
-
-
-        await page.getByTestId('wait-response-btn').click()
-        await page.getByText('Trigger API Response Completed').waitFor({state: 'visible'})
-        await expect(page.getByText('Trigger API Response Completed')).toBeVisible()
-
-        // hidden - locator hidden in dom should not be visible
-        // attached - Locator exists in DOM
-        // detached - locator should not exists in DOM and should not be visible
+        // await page.getByTestId('wait-response-btn').click()
+        // await page.waitForResponse('https://playwright-mastery-academy-app.vercel.app/api/practice/waits-status')
+        // await expect(page.getByText('Trigger API Response Completed')).toBeVisible()
 
 
-        await page.getByTestId('wait-response-btn').click()
-        await page.waitForSelector('//*[contains(text(), "Trigger API Response Completed")]')
-        await expect(page.getByText('Trigger API Response Completed')).toBeVisible()
+        // await page.getByTestId('wait-response-btn').click()
+        // await page.getByText('Trigger API Response Completed').waitFor({state: 'visible'})
+        // await expect(page.getByText('Trigger API Response Completed')).toBeVisible()
+
+        // // hidden - locator hidden in dom should not be visible
+        // // attached - Locator exists in DOM
+        // // detached - locator should not exists in DOM and should not be visible
+
+
+        // await page.getByTestId('wait-response-btn').click()
+        // await page.waitForSelector('//*[contains(text(), "Trigger API Response Completed")]')
+        // await expect(page.getByText('Trigger API Response Completed')).toBeVisible()
+
+
+        // load - DOM ready, images load, speed - medium
+        // await page.getByTestId('wait-loadstate-practice-load-btn').click()
+        // await page.waitForLoadState('load')
+        // await expect(page.getByText('Test load State: Completed')).toBeVisible()
+
+        // // domContentLoaded - DOM ready - speed - fast
+        // await page.getByTestId('wait-loadstate-practice-dom-btn').click()
+        // await page.waitForLoadState('domcontentloaded')
+        // await expect(page.getByText('Test DOMContentLoaded State: Completed')).toBeVisible()
+
+
+        // //networkidle - DOM ready, images load, API calls completed - speed - slow
+        // await page.getByTestId('wait-loadstate-practice-networkidle-btn').click()
+        // await page.waitForLoadState('networkidle')
+        // await expect(page.getByText('Test Network Idle State: Completed')).toBeVisible()
+
+    })
+
+
+    test('Handling mouse actions', async ({ page }) => {
+
+        await page.goto('https://playwright-mastery-academy-app.vercel.app/practice/sandbox-advanced')
+
+        await page.getByTestId('mouse-downup-target').hover()
+
+        await page.mouse.down()
+
+        await expect(page.getByText('Mouse down detected.')).toBeVisible()
+
+        await page.mouse.up()
+
+        await expect(page.getByText('Mouse down + up detected.')).toBeVisible()
+
+        await page.getByTestId('mouse-rightclick-target').click({ button: 'right' })
+
+        await expect(page.getByText('Right click detected on target.')).toBeVisible()
+
+
+        await page.getByRole('heading', { name: 'Mouse Actions' }).scrollIntoViewIfNeeded()
+
+        await page.waitForTimeout(2000)
+
+
+        await page.getByTestId('mouse-wheel-target').hover()
+        await page.mouse.wheel(0, 300)
+        await expect(page.getByText('Mouse wheel scrolled down.')).toBeVisible()
 
 
 
+    })
 
-        
+
+    test('force actions - not recommended', async ({ page }) => {
+
+        // click, dblclick, check, uncheck, selectOption, fill, type
+
+        await page.goto('https://playwright-mastery-academy-app.vercel.app/practice/sandbox-advanced')
+
+        // Attched into DOM
+        //visible
+        //Stable
+        //enable
+        //Not covered by another element
+
+        await page.getByTestId('force-click-btn').click({ force: true })
     })
 
 
 
+    test('element screenshot and page screenshot', async ({ page }) => {
+
+
+        await page.goto('https://playwright-mastery-academy-app.vercel.app/practice/sandbox-advanced')
+
+        await page.getByTestId('wait-response-btn').screenshot({ path: 'screenshots/triggerAPIResponseBtn.png' })
+
+
+        await page.screenshot({ path: 'screenshots/pageScreenshot.png', fullPage: true })
+
+
+    })
+
+
+
+    test('retrying assertions, not retrying assertions and negating assertions', async ({ page }) => {
+
+        // retrying assertions - 5 secs
+
+
+        // viisblity & state
+
+        // expect(locator).tobevisible() 
+        // expect(locator).tobeHidden() 
+        // expect(locator).toBeEnabled() 
+        // expect(locator).toBeDisabled()
+        // expect(locator).toBeChecked() 
+        // expect(locator).toBeEditable()
+
+
+        // text
+
+        //expect(locator).toHaveText('exact text') 
+        // expect(locator).toContainText('partially matching text') 
+        // expect(locator).toHaveValue('value') 
+        // expect(locator).toHaveAttribute('attr value') 
+        // expect(locator).toHaveClass('class-name') 
+        // expect(locator).toHaveCount(1) 
+        // expect(locator).toHaveId('id') 
+
+
+        // page
+
+        // expect(page).toHaveTitle('playwright')
+        // expect(page).toHaveURL('https://playwright-mastery-academy-app.vercel.app/practice/sandbox-advanced')
+
+        //other assertions
+
+        // expect(locator).toBeEmpty() 
+        // expect(locator).toBeFocused() 
+
+
+
+        // non retrying assertions
+
+        // expect(5).toBe(5)
+        // expect(5).toEqual(5)
+        // expect(5).toStrictEqual(5)
+        // expect(true).toBeTruthy()
+        // expect(false).toBeFalsy()
+        // expect(5).toBeGreaterThan(3)
+        // expect(5).toBeLessThan(10)
+        // expect(5).toBeGreaterThanOrEqual(5)
+        // expect(5).toBeLessThanOrEqual(5)
+        // expect(10).toContain([10, 20, 30])
+
+
+        // negating assertions
+
+
+        //expect(locator).not.toBeVisible()
+
+        // expect(5).not.toBe(10)
+
+
+
+    })
+
+
+
+    test('hard and soft assertions', async ({ page }) => {
+
+        await page.goto('https://playwright-mastery-academy-app.vercel.app/practice/sandbox-basic')
+
+        await expect(page.getByText('Interactive Playwright Sandbox Basic')).toBeVisible()
+
+        await page.getByTestId('single-click-btn').click()
+
+        await expect.soft(page.getByText('Single click completed wrong.')).toBeVisible()
+
+        await page.getByTestId('double-click-btn').dblclick()
+
+        await expect(page.getByText('Double click completed.')).toBeVisible()
+
+        await page.getByTestId('hover-btn').hover()
+
+        await expect(page.getByText('Hover triggered successfully.')).toBeVisible()
+
+        await page.getByTestId('tooltip-trigger-btn').hover()
+
+        await expect(page.getByText('Tooltip verified').first()).toBeVisible()
+
+
+    })
 
 
 
