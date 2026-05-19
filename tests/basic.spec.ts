@@ -2,16 +2,24 @@ import { test, expect } from '@playwright/test'
 
 
 test.describe('Basic element handling tests', () => {
+test.slow()
+    // only, skip, fail, fixme, slow
 
-    test('Handiling Click, Double Click, Hover, Tooltip, Static Dropdown', async ({ page }) => {
+    test.describe.configure({timeout: 180000})
 
-        await page.goto('https://playwright-mastery-academy-app.vercel.app/practice/sandbox-basic')
+    test.only('Handiling Click, Double Click, Hover, Tooltip, Static Dropdown', async ({ page }) => {
+
+        // test 30000ms timeout
+
+        test.setTimeout(300000)
+
+        await page.goto('https://playwright-mastery-academy-app.vercel.app/practice/sandbox-basic', {timeout: 120000})
 
         await expect(page.getByText('Interactive Playwright Sandbox Basic')).toBeVisible()
 
-        await page.getByTestId('single-click-btn').click()
+        await page.getByTestId('single-click-btn').click({timeout: 60000})
 
-        await expect(page.getByText('Single click completed.')).toBeVisible()
+        await expect(page.getByText('Single click completed.')).toBeVisible({timeout: 60000})
 
         await page.getByTestId('double-click-btn').dblclick()
 
@@ -29,7 +37,7 @@ test.describe('Basic element handling tests', () => {
 
         await page.getByTestId('static-practice-select').selectOption('Easy - Basic locator targeting')
 
-        await expect(page.getByTestId('static-dropdown-status')).toContainText('Static new dropdown selected: Easy')
+        await expect(page.getByTestId('static-dropdown-status')).toContainText('Static dropdown selected: Easy')
 
 
     })
