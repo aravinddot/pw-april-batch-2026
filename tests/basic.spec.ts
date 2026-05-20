@@ -7,7 +7,7 @@ test.slow()
 
     test.describe.configure({timeout: 180000})
 
-    test.only('Handiling Click, Double Click, Hover, Tooltip, Static Dropdown', async ({ page }) => {
+    test('Handiling Click, Double Click, Hover, Tooltip, Static Dropdown', async ({ page }) => {
 
         // test 30000ms timeout
 

@@ -3,7 +3,7 @@ import { test, expect, chromium, firefox, webkit } from '@playwright/test'
 test.describe('Advanced playwright element handling', () => {
 
 
-    test('element state checks ischecked(), is editable()', async ({ page }) => {
+    test('element state checks ischecked(), is editable() @smoke', async ({ page }) => {
 
         // isChecked, isVisible, isDisabled, isEditable, isHidden
 
@@ -21,7 +21,7 @@ test.describe('Advanced playwright element handling', () => {
     })
 
 
-    test('element state check - isVisible', async ({ page }) => {
+    test('element state check - isVisible @regression', async ({ page }) => {
 
         await page.goto('https://playwright-mastery-academy-app.vercel.app/practice/sandbox-advanced')
 
@@ -39,7 +39,7 @@ test.describe('Advanced playwright element handling', () => {
     })
 
 
-    test('Handling Dynamic dropdown', async ({ page }) => {
+    test('Handling Dynamic dropdown @smoke @regression', async ({ page }) => {
 
         await page.goto('https://playwright-mastery-academy-app.vercel.app/practice/sandbox-advanced')
 
@@ -56,7 +56,7 @@ test.describe('Advanced playwright element handling', () => {
     })
 
 
-    test('Handling hidden dropdown', async ({ page }) => {
+    test('Handling hidden dropdown @regression', async ({ page }) => {
 
         await page.goto('https://playwright-mastery-academy-app.vercel.app/practice/sandbox-advanced')
 
@@ -72,7 +72,7 @@ test.describe('Advanced playwright element handling', () => {
 
 
 
-    test('handling boostrap dropdown', async ({ page }) => {
+    test('handling boostrap dropdown @fail', async ({ page }) => {
 
         await page.goto('https://playwright-mastery-academy-app.vercel.app/practice/sandbox-advanced')
 
