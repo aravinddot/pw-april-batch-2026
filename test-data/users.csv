@@ -1,0 +1,5 @@
+username,password,index,expected
+standard_user,secret_sauce,1,Sauce Labs Backpack
+problem_user,secret_sauce,2,Sauce Labs Bike Light
+standard_user,secret_sauce,3,Sauce Labs Bolt T-Shirt
+problem_user,secret_sauce,4,Sauce Labs Fleece Jacket
